@@ -1,0 +1,42 @@
+.toolbar {
+  border: 2px solid #a9b3cc;
+  border-radius: 5px;
+}
+
+.orgchart-container {
+  background-color: #fefefe;
+  border: 2px solid #a9b3cc;
+  margin: 10px 0;
+  clear: both;
+}
+
+.orgchart.customChart {
+  background-image: none;
+}
+
+.orgchart.customChart > ul > li > ul li::before {
+  border-top-color: #a9b3cc;
+}
+
+.orgchart.customChart > ul > li > ul li .oc-node::before,
+.orgchart.customChart ul li .oc-node:not(:only-child)::after {
+  background-color: #a9b3cc;
+}
+
+.orgchart.customChart .oc-node.selected,
+.orgchart.customChart .oc-node.allowedDrop {
+  border-color: #516699;
+}
+
+.orgchart.customChart .oc-node .oc-heading {
+  background-color: #516699;
+  border: 1px solid #516699;
+}
+
+.orgchart.customChart .oc-node .oc-heading .oci.oci-leader.oc-symbol {
+  display: none;
+}
+
+.orgchart.customChart .oc-node .oc-content {
+  border: 1px solid #516699;
+}

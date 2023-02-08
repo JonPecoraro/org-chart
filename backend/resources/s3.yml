@@ -1,0 +1,29 @@
+Resources:
+  # Define bucket for holding the static website code
+  StaticCodeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: ${self:custom.siteNameBucket}
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: index.html
+  StaticCodeS3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket:
+        Ref: StaticCodeBucket
+      PolicyDocument:
+        Statement:
+          - Sid: PublicReadGetObject
+            Effect: Allow
+            Principal: "*"
+            Action:
+              - s3:GetObject
+            Resource: arn:aws:s3:::${self:custom.siteNameBucket}/*
+
+# Print out the name of the buckets that are created
+Outputs:
+  StaticCode:
+    Value:
+      Ref: StaticCodeBucket

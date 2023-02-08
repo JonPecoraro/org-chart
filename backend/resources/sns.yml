@@ -1,0 +1,14 @@
+Resources:
+  # Define SNS topic and email subscription
+  OrgChartSnsTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: ${self:custom.snsEmail}
+          Protocol: "email"
+      TopicName: "OrgChartSnsTopic"
+
+Outputs:
+  SnsTopicArn:
+    Description: Arn of Created SNS Topic
+    Value: !Ref OrgChartSnsTopic

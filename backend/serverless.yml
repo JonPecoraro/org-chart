@@ -1,0 +1,126 @@
+service: org-chart
+
+frameworkVersion: "3"
+
+# Create an optimized package for our functions
+package:
+  individually: true
+
+plugins:
+  - serverless-bundle # Package our functions with Webpack
+  - serverless-offline
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+  tableName: ${self:custom.stage}-org-chart
+  siteNameBucket: ${self:custom.stage}.org-chart.com
+  snsEmail: ${env:SNS_EMAIL} # Pass this in with SNS_EMAIL=<email> sls deploy ...
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: dev
+  region: us-east-1
+
+  environment:
+    tableName: ${self:custom.tableName}
+    snsTopicArn: !Ref OrgChartSnsTopic
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:DescribeTable
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "Fn::GetAtt": [OrgChartTable, Arn]
+        - Effect: Allow
+          Action:
+            - sns:Publish
+          Resource: !Ref OrgChartSnsTopic
+
+functions:
+  createOrgChart:
+    handler: functions/create-org-chart.main
+    events:
+      - http:
+          path: org-charts
+          method: post
+          cors: true
+          authorizer: aws_iam
+  shareOrgChart:
+    handler: functions/share-org-chart.main
+    events:
+      - http:
+          path: org-charts/share/{id}
+          method: post
+          cors: true
+          authorizer: aws_iam
+  getOrgChart:
+    handler: functions/get-org-chart.main
+    events:
+      - http:
+          path: org-charts/{id}
+          method: get
+          cors: true
+          authorizer: aws_iam
+  getSharedOrgChart:
+    handler: functions/get-shared-org-chart.main
+    events:
+      - http:
+          path: org-charts/shared/{linkKey}
+          method: get
+          cors: true
+  listOrgCharts:
+    handler: functions/list-org-charts.main
+    events:
+      - http:
+          path: org-charts
+          method: get
+          cors: true
+          authorizer: aws_iam
+  updateOrgChart:
+    handler: functions/update-org-chart.main
+    events:
+      - http:
+          path: org-charts/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+  updateOrgChartByShareLink:
+    handler: functions/update-org-chart-by-share-link.main
+    events:
+      - http:
+          path: org-charts/update-by-share-link/{id}
+          method: put
+          cors: true
+  updateShareLink:
+    handler: functions/update-share-link.main
+    events:
+      - http:
+          path: org-charts/share/{id}
+          method: put
+          cors: true
+          authorizer: aws_iam
+  deleteOrgChart:
+    handler: functions/delete-org-chart.main
+    events:
+      - http:
+          path: org-charts/{id}
+          method: delete
+          cors: true
+          authorizer: aws_iam
+
+resources:
+  - ${file(resources/api-gateway.yml)}
+  - ${file(resources/dynamodb.yml)}
+  - ${file(resources/s3.yml)}
+  - ${file(resources/sns.yml)}
+  - ${file(resources/cognito-user-pool.yml)}
+  - ${file(resources/cognito-identity-pool.yml)}

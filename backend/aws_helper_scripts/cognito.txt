@@ -1,0 +1,11 @@
+aws cognito-idp sign-up \
+  --region COGNITO_REGION \
+  --client-id CLIENT_ID \
+  --username YOUR_USER_EMAIL \
+  --password YOUR_USER_PASSWORD
+
+aws cognito-idp admin-confirm-sign-up \
+  --region COGNITO_REGION \
+  --user-pool-id USER_POOL_ID \
+  --username YOUR_USER_EMAIL \
+  --profile AWS_PROFILE

@@ -1,0 +1,34 @@
+Resources:
+  # CustomDomain:
+  #   Type: AWS::ApiGateway::DomainName
+  #   Properties: 
+  #     CertificateArn: ${self:custom.apiCertArn}
+  #     DomainName: ${self:custom.apiDomain}
+  #     EndpointConfiguration: 
+  #       Types:
+  #         - EDGE
+  # CustomDomainMapping:
+  #   Type: AWS::ApiGateway::BasePathMapping
+  #   Properties: 
+  #     BasePath: ${self:custom.stage}
+  #     DomainName: !Ref CustomDomain
+  #     RestApiId: !Ref ApiGatewayRestApi
+  #     Stage: ${self:custom.stage}
+  GatewayResponseDefault4XX:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    Properties:
+      ResponseParameters:
+         gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+         gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_4XX
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
+  GatewayResponseDefault5XX:
+    Type: 'AWS::ApiGateway::GatewayResponse'
+    Properties:
+      ResponseParameters:
+         gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+         gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+      ResponseType: DEFAULT_5XX
+      RestApiId:
+        Ref: 'ApiGatewayRestApi'
